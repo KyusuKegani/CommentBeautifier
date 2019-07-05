@@ -2,7 +2,7 @@ import sys
 
 args = sys.argv
 filePath = args[1]
-
+offset = 4
 sourceCode = []
 try:
     with open(filePath) as lines:
@@ -12,15 +12,19 @@ except OSError:
     print("ファイルを開くことができません")
 if sourceCode[0].startswith("//"):
     index = 0
-    sourceCode.insert(index, "//////////////////////////")
+    maxLength = len(sourceCode[0])
     for sourceLine in sourceCode:
         if sourceLine.startswith("//"):
             index += 1
+            maxLength = max(maxLength, len(sourceLine))
             continue
         else:
+            index += 1
             break
-    print(index)
-    sourceCode.insert(index, "//////////////////////////")
+
+    headerComment = "/" * (maxLength + offset)
+    sourceCode.insert(0, headerComment)
+    sourceCode.insert(index, headerComment)
 
 else:
     print("No Header Comment")
@@ -28,7 +32,7 @@ else:
 print(sourceCode)
 
 try:
-    with open(filePath+"2", "w") as newLine:
+    with open(filePath + "2", "w") as newLine:
         newLine.write("\n".join(sourceCode))
 except OSError:
     print("ファイルを開くことができません")
